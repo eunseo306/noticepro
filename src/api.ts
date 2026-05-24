@@ -11,7 +11,7 @@ interface Options {
 }
 
 export async function callAnthropic(messages: Message[], options: Options = {}): Promise<string> {
-  const { model = 'claude-sonnet-4-20250514', maxTokens = 1000, stream = false, onChunk } = options;
+  const { model = 'gpt-4o', maxTokens = 1000, stream = false, onChunk } = options;
 
   const response = await fetch('/api/anthropic', {
     method: 'POST',
@@ -39,10 +39,8 @@ export async function callAnthropic(messages: Message[], options: Options = {}):
         if (d === '[DONE]') continue;
         try {
           const p = JSON.parse(d);
-          if (p.type === 'content_block_delta' && p.delta?.text) {
-            result += p.delta.text;
-            onChunk(p.delta.text);
-          }
+          const text = p.choices?.[0]?.delta?.content;
+          if (text) { result += text; onChunk(text); }
         } catch {}
       }
     }
@@ -50,5 +48,5 @@ export async function callAnthropic(messages: Message[], options: Options = {}):
   }
 
   const data = await response.json();
-  return data.content[0].text;
+  return data.choices[0].message.content;
 }
