@@ -13,9 +13,16 @@ interface Options {
 export async function callAnthropic(messages: Message[], options: Options = {}): Promise<string> {
   const { model = 'gpt-4o', maxTokens = 1000, stream = false, onChunk } = options;
 
-  const response = await fetch('/api/anthropic', {
+  const devKey = (import.meta as any).env?.VITE_OPENAI_API_KEY;
+  const url = devKey
+    ? 'https://api.openai.com/v1/chat/completions'
+    : '/api/anthropic';
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (devKey) headers['Authorization'] = `Bearer ${devKey}`;
+
+  const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ model, max_tokens: maxTokens, stream, messages }),
   });
 
