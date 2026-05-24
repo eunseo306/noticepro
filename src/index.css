@@ -59,7 +59,7 @@ textarea{resize:vertical;line-height:1.7;}
 .chip:hover{border-color:var(--p2);}
 .pbtn{width:100%;padding:10px;font-size:13px;font-weight:600;border-radius:var(--radius-sm);background:var(--p);color:#fff;border:none;cursor:pointer;transition:opacity .15s;letter-spacing:-.2px;}
 .pbtn:hover{opacity:.88;}.pbtn:disabled{opacity:.4;cursor:not-allowed;}
-.sbtn{font-size:12px;padding:5px 11px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;color:var(--muted);background:var(--card);transition:all .15s;font-weight:500;}
+.sbtn{font-size:12px;padding:5px 11px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;color:var(--muted);background:var(--card);transition:all .15s;font-weight:500;white-space:nowrap;}
 .sbtn:hover{background:var(--bg);border-color:var(--g3);}
 .gbtn{font-size:12px;padding:5px 11px;border-radius:var(--radius-sm);border:1px solid var(--p2);cursor:pointer;color:var(--p3);background:var(--p1);font-weight:500;}
 .gbtn:hover{background:var(--p2);color:var(--p3);}

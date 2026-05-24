@@ -48,15 +48,25 @@ export default function NotifyPage() {
 
   async function genNotify() {
     const kidName = selKid !== null ? kids[selKid] : '';
+    const firstName = kidName.length > 1 ? kidName.slice(1) : kidName;
+    const hasBatchim = (s: string) => { const c = s.charCodeAt(s.length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 !== 0; };
+    const parentLabel = firstName ? (hasBatchim(firstName) ? `${firstName}이 학부모님` : `${firstName} 학부모님`) : '○○ 학부모님';
     const wk = activeWeek;
     const acts = [...selActs].map(s => s.includes(':') ? s.split(':').slice(1).join(':') : s).join(', ');
-    const ds = date ? new Date(date + 'T00:00:00').toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }) : '';
+    const dateObj = date ? new Date(date + 'T00:00:00') : null;
+    const ds = dateObj ? dateObj.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }) : '';
+    const dow = dateObj ? dateObj.getDay() : -1; // 0=일,1=월,...,5=금,6=토
+    const dayContext = dow === 1
+      ? '오늘은 월요일로 한 주의 시작이므로, 인삿말에 새로운 한 주의 시작을 반기는 따뜻한 멘트를 자연스럽게 포함할 것'
+      : dow === 5
+      ? '오늘은 금요일로 한 주의 마지막이므로, 인삿말에 한 주 마무리를 격려하고 주말을 응원하는 멘트를 자연스럽게 포함할 것'
+      : '주 시작·마무리 관련 멘트(월요일, 금요일, 한 주의 시작/마지막 등)는 절대 넣지 말 것';
 
     const prompt = `유치원 교사로서 학부모에게 보내는 알림장을 작성해주세요.
 [정보]
 - 말투: ${tone}
 - 반: ${className || '우리반'}
-- 유아 이름: ${kidName || '(이름 미선택)'}
+- 유아 이름: ${firstName || '(이름 미선택)'} (성 없이 이름만 사용)
 - 날짜: ${ds}
 - 주차: ${wk?.name || ''} / 대주제: ${wk?.mainTheme || ''} / 소주제: ${wk?.subTheme || ''}
 - 컨디션: ${mood || '정보없음'}
@@ -66,14 +76,15 @@ export default function NotifyPage() {
 - 전달사항: ${notice || '없음'}
 
 [반드시 지켜야 할 규칙]
-1. 반드시 "안녕하세요, ${kidName || '○○'}학부모님💌" 으로 시작할 것
-2. 컨디션과 식사 내용을 두 번째 문단에 자연스럽게 포함할 것
-3. 오늘 활동을 주제와 연결해 따뜻하게 전달할 것
-4. 전달사항이 있으면 명확히 포함할 것
-5. 마무리 인사로 끝낼 것
-6. 전체 200~280자
-7. 이모지 2~3개 자연스럽게 포함
-8. 알림장 내용만 출력, 다른 설명 없이`;
+1. 반드시 "안녕하세요, ${parentLabel}💌" 으로 시작할 것
+2. ${dayContext}
+3. 컨디션과 식사 내용을 자연스럽게 포함할 것
+4. 오늘 활동을 주제와 연결해 따뜻하게 전달할 것
+5. 전달사항이 있으면 명확히 포함할 것
+6. 마무리 인사로 끝낼 것
+7. 전체 200~280자
+8. 이모지 2~3개 자연스럽게 포함
+9. 알림장 내용만 출력, 다른 설명 없이`;
 
     setLoading(true);
     setShowResult(true);
