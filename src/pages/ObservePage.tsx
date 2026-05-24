@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useStore } from '../store';
 import { callAnthropic } from '../api';
 import { DOMAINS } from '../constants';
+import { toArchiveRecord } from '../utils/toArchiveRecord';
 
 export default function ObservePage() {
   const { kids, records, setRecords } = useStore();
@@ -13,6 +14,7 @@ export default function ObservePage() {
   const [resultText, setResultText] = useState('');
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   function toggleDomain(d: string) {
     setSelDomains(prev => { const n = new Set(prev); n.has(d) ? n.delete(d) : n.add(d); return n; });
@@ -53,14 +55,21 @@ ${rawObs}
     setLoading(false);
   }
 
-  function saveToArchive() {
-    if (!resultText.trim()) return;
+  async function saveToArchive() {
+    if (!resultText.trim() || saving) return;
     const kidName = selKid !== null ? kids[selKid] : '미지정';
-    setRecords([...records, {
-      type: 'observe', kidName, date, theme,
-      body: resultText.trim(), domains: [...selDomains], eval: '', ts: Date.now(),
-    }]);
-    alert('기록함에 저장되었습니다!');
+    setSaving(true);
+    try {
+      const { body, domains } = await toArchiveRecord(kidName, resultText.trim());
+      setRecords([...records, {
+        type: 'observe', kidName, date, theme,
+        body, domains, eval: '', ts: Date.now(),
+      }]);
+      alert('기록함에 저장되었습니다!');
+    } catch {
+      alert('저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+    setSaving(false);
   }
 
   return (
@@ -117,7 +126,9 @@ ${rawObs}
           <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button className="sbtn" onClick={() => navigator.clipboard.writeText(resultText)}>복사</button>
             <button className="sbtn" onClick={genObs}>↺ 다시 생성</button>
-            <button className="pbtn" style={{ flex: 1, maxWidth: 200 }} onClick={saveToArchive}>기록함에 저장</button>
+            <button className="pbtn" style={{ flex: 1, maxWidth: 200 }} disabled={saving} onClick={saveToArchive}>
+              {saving ? <><span className="spin" />변환 중...</> : '기록함에 저장'}
+            </button>
           </div>
         </div>
       )}

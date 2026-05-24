@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useStore } from '../store';
 import { callAnthropic } from '../api';
 import { ACTIVITY_CATEGORIES } from '../constants';
+import { toArchiveRecord } from '../utils/toArchiveRecord';
 
 const MOODS = [
   { v: '매우 활발하고 즐거웠어요', em: '🤩', label: '매우 활발' },
@@ -32,6 +33,7 @@ export default function NotifyPage() {
   const [resultText, setResultText] = useState('');
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const activeWeekIdx = weekSel === '' ? null : parseInt(weekSel);
   const activeWeek = activeWeekIdx !== null ? weeks[activeWeekIdx] : null;
@@ -98,15 +100,22 @@ export default function NotifyPage() {
     setLoading(false);
   }
 
-  function saveToArchive() {
-    if (!resultText.trim()) return;
+  async function saveToArchive() {
+    if (!resultText.trim() || saving) return;
     const kidName = selKid !== null ? kids[selKid] : '미지정';
-    setRecords([...records, {
-      type: 'notify', kidName, date,
-      theme: activeWeek ? [activeWeek.mainTheme, activeWeek.subTheme].filter(Boolean).join(' / ') : '',
-      body: resultText.trim(), domains: [], eval: '', ts: Date.now(),
-    }]);
-    alert('기록함에 저장되었습니다!');
+    setSaving(true);
+    try {
+      const { body, domains } = await toArchiveRecord(kidName, resultText.trim());
+      setRecords([...records, {
+        type: 'notify', kidName, date,
+        theme: activeWeek ? [activeWeek.mainTheme, activeWeek.subTheme].filter(Boolean).join(' / ') : '',
+        body, domains, eval: '', ts: Date.now(),
+      }]);
+      alert('기록함에 저장되었습니다!');
+    } catch {
+      alert('저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+    setSaving(false);
   }
 
   return (
@@ -214,7 +223,9 @@ export default function NotifyPage() {
           <div className="result-actions">
             <button className="sbtn" onClick={() => navigator.clipboard.writeText(resultText)}>📋 복사</button>
             <button className="gbtn" onClick={genNotify}>↺ 다시 생성</button>
-            <button className="pbtn" style={{ flex: 1, maxWidth: 200 }} onClick={saveToArchive}>기록함에 저장</button>
+            <button className="pbtn" style={{ flex: 1, maxWidth: 200 }} disabled={saving} onClick={saveToArchive}>
+              {saving ? <><span className="spin" />변환 중...</> : '기록함에 저장'}
+            </button>
           </div>
         </div>
       )}
