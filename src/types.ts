@@ -4,7 +4,7 @@ export interface Week {
   name: string;
   mainTheme: string;
   subTheme: string;
-  activities: string[];
+  activities: Record<string, string[]>;
 }
 
 export interface AppRecord {

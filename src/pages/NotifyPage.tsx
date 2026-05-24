@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../store';
 import { callAnthropic } from '../api';
+import { ACTIVITY_CATEGORIES } from '../constants';
 
 const MOODS = [
   { v: '매우 활발하고 즐거웠어요', em: '🤩', label: '매우 활발' },
@@ -48,7 +49,7 @@ export default function NotifyPage() {
   async function genNotify() {
     const kidName = selKid !== null ? kids[selKid] : '';
     const wk = activeWeek;
-    const acts = [...selActs].join(', ');
+    const acts = [...selActs].map(s => s.includes(':') ? s.split(':').slice(1).join(':') : s).join(', ');
     const ds = date ? new Date(date + 'T00:00:00').toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }) : '';
 
     const prompt = `유치원 교사로서 학부모에게 보내는 알림장을 작성해주세요.
@@ -154,11 +155,24 @@ export default function NotifyPage() {
       <div className="card">
         <div className="sec">
           <label>오늘 활동 선택</label>
-          {activeWeek
-            ? <div className="tag-row">{(activeWeek.activities || []).map((a, i) => (
-              <span key={i} className={`tag${selActs.has(a) ? ' on' : ''}`} onClick={() => toggleAct(a)}>{a}</span>
-            ))}</div>
-            : <p className="hint" style={{ display: 'block' }}>이번 주를 선택하면 활동 목록이 나타나요</p>
+          {!activeWeek
+            ? <p className="hint" style={{ display: 'block' }}>이번 주를 선택하면 활동 목록이 나타나요</p>
+            : ACTIVITY_CATEGORIES.map(cat => {
+              const items = activeWeek.activities?.[cat] || [];
+              if (items.length === 0) return null;
+              return (
+                <div key={cat} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 6 }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--hint)', width: 82, flexShrink: 0, paddingTop: 5 }}>{cat}</span>
+                  <div className="tag-row" style={{ margin: 0, flex: 1 }}>
+                    {items.map((a, j) => (
+                      <span key={j} className={`tag${selActs.has(`${cat}:${a}`) ? ' on' : ''}`} onClick={() => toggleAct(`${cat}:${a}`)}>
+                        {a}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })
           }
         </div>
         <div className="sec">

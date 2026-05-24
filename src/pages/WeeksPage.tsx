@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useStore } from '../store';
+import { ACTIVITY_CATEGORIES } from '../constants';
 
 export default function WeeksPage() {
   const { weeks, setWeeks, selWeekIdx, setSelWeekIdx } = useStore();
   const [wkName, setWkName] = useState('');
   const [wkMain, setWkMain] = useState('');
   const [wkSub, setWkSub] = useState('');
-  const [actInputs, setActInputs] = useState<Record<number, string>>({});
+  // actInputs[weekIdx][category] = current input value
+  const [actInputs, setActInputs] = useState<Record<number, Record<string, string>>>({});
 
   function addWeek() {
     if (!wkName.trim()) return;
-    setWeeks([...weeks, { name: wkName.trim(), mainTheme: wkMain.trim(), subTheme: wkSub.trim(), activities: [] }]);
+    const emptyActs = Object.fromEntries(ACTIVITY_CATEGORIES.map(c => [c, []]));
+    setWeeks([...weeks, { name: wkName.trim(), mainTheme: wkMain.trim(), subTheme: wkSub.trim(), activities: emptyActs }]);
     setWkName(''); setWkMain(''); setWkSub('');
   }
 
@@ -20,15 +23,25 @@ export default function WeeksPage() {
     else if (selWeekIdx !== null && selWeekIdx > i) setSelWeekIdx(selWeekIdx - 1);
   }
 
-  function addAct(i: number) {
-    const val = (actInputs[i] || '').trim();
+  function addAct(wi: number, cat: string) {
+    const val = (actInputs[wi]?.[cat] || '').trim();
     if (!val) return;
-    setWeeks(weeks.map((w, idx) => idx === i ? { ...w, activities: [...w.activities, val] } : w));
-    setActInputs(prev => ({ ...prev, [i]: '' }));
+    setWeeks(weeks.map((w, idx) => idx !== wi ? w : {
+      ...w,
+      activities: { ...w.activities, [cat]: [...(w.activities[cat] || []), val] },
+    }));
+    setActInputs(prev => ({ ...prev, [wi]: { ...prev[wi], [cat]: '' } }));
   }
 
-  function delAct(wi: number, ai: number) {
-    setWeeks(weeks.map((w, idx) => idx === wi ? { ...w, activities: w.activities.filter((_, j) => j !== ai) } : w));
+  function delAct(wi: number, cat: string, ai: number) {
+    setWeeks(weeks.map((w, idx) => idx !== wi ? w : {
+      ...w,
+      activities: { ...w.activities, [cat]: w.activities[cat].filter((_, j) => j !== ai) },
+    }));
+  }
+
+  function setInput(wi: number, cat: string, val: string) {
+    setActInputs(prev => ({ ...prev, [wi]: { ...prev[wi], [cat]: val } }));
   }
 
   return (
@@ -61,6 +74,7 @@ export default function WeeksPage() {
         ? <p className="empty-msg">등록된 주차가 없어요.<br />위에서 새 주차를 추가해보세요.</p>
         : weeks.map((w, i) => (
           <div key={i} className={`week-card${selWeekIdx === i ? ' active' : ''}`}>
+            {/* 헤더 */}
             <div className="week-hdr">
               <div>
                 <div className="week-name">{w.name}</div>
@@ -76,21 +90,42 @@ export default function WeeksPage() {
                 <button className="icon-btn" onClick={() => delWeek(i)}>🗑</button>
               </div>
             </div>
-            <div className="act-chips" style={{ marginBottom: 8 }}>
-              {w.activities.map((a, j) => (
-                <span key={j} className="act-chip">{a}<span className="del" onClick={() => delAct(i, j)}>×</span></span>
-              ))}
-            </div>
-            <div className="add-row">
-              <input
-                type="text"
-                value={actInputs[i] || ''}
-                onChange={e => setActInputs(prev => ({ ...prev, [i]: e.target.value }))}
-                placeholder="활동 추가 (Enter)"
-                onKeyDown={e => e.key === 'Enter' && addAct(i)}
-                style={{ fontSize: 12 }}
-              />
-              <button className="add-btn" onClick={() => addAct(i)} style={{ fontSize: 12 }}>+ 추가</button>
+
+            {/* 활동 카테고리별 */}
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {ACTIVITY_CATEGORIES.map(cat => {
+                const items = w.activities?.[cat] || [];
+                const inputVal = actInputs[i]?.[cat] || '';
+                return (
+                  <div key={cat} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', width: 82, flexShrink: 0, paddingTop: 6, lineHeight: 1.3 }}>
+                      {cat}
+                    </span>
+                    <div style={{ flex: 1 }}>
+                      {items.length > 0 && (
+                        <div className="act-chips" style={{ marginBottom: 4 }}>
+                          {items.map((a, j) => (
+                            <span key={j} className="act-chip">
+                              {a}<span className="del" onClick={() => delAct(i, cat, j)}>×</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="add-row">
+                        <input
+                          type="text"
+                          value={inputVal}
+                          onChange={e => setInput(i, cat, e.target.value)}
+                          placeholder="활동 입력 후 Enter"
+                          onKeyDown={e => e.key === 'Enter' && addAct(i, cat)}
+                          style={{ fontSize: 12, padding: '5px 9px' }}
+                        />
+                        <button className="add-btn" onClick={() => addAct(i, cat)} style={{ fontSize: 12, padding: '0 10px' }}>+</button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))
