@@ -82,24 +82,25 @@ export default function Sidebar({ current, onNav, onClassModal }: Props) {
   return (
     <div className="sidebar">
       <div className="brand">
-        <div className="brand-name">유아기록 Pro</div>
-        <div className="brand-sub">놀이 · 관찰 · 누리과정 평가</div>
+        <div className="brand-tagline">아이들의 모든 순간을 모아 기록하다 ✨</div>
+        <div className="brand-name">MoaRok!</div>
+        <div className="brand-sub">유아 알림장·관찰기록·평가 통합 플랫폼</div>
       </div>
       <div className="class-info" onClick={onClassModal}>
         <div className="class-badge">현재 반</div>
         <div className="class-name"><span>{className ? getClassEmoji(className) : '🏫'}</span><span>{className || '반 설정 필요'}</span></div>
       </div>
       <nav className="nav">
-        <div className="nav-section">수업 관리</div>
-        {item('weeks', '📅', '주간활동')}
+        <div className="nav-section">기록평가</div>
         {item('notify', '📮', '알림장')}
-        <div className="nav-divider" />
-        <div className="nav-section">기록 · 평가</div>
         {item('observe', '🔍', '관찰기록')}
+        <div className="nav-divider" />
+        <div className="nav-section">기록관리</div>
         {item('archive', '🗂️', '기록함')}
         {item('stats', '📊', '누적 현황')}
         <div className="nav-divider" />
         <div className="nav-section">설정</div>
+        {item('weeks', '📅', '주간활동')}
         {item('kids', '👧', '유아관리')}
         <div className="nav-item" onClick={onClassModal}><span className="icon">⚙️</span>반 설정</div>
       </nav>
