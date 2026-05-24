@@ -4,23 +4,27 @@
 
 ```
 src/
-  types.ts          타입 정의 (Page, Week, AppRecord)
-  constants.ts      ACTIVITY_CATEGORIES, DOMAINS 상수
-  api.ts            OpenAI 호출 함수 (callAnthropic)
-  store.tsx         전역 상태 Context (kids, weeks, records 등)
-  App.tsx           레이아웃 + 페이지 라우팅
+  types.ts              타입 정의 (Page, Week, AppRecord)
+  constants.ts          ACTIVITY_CATEGORIES, DOMAINS 상수
+  api.ts                OpenAI 호출 함수 (callAnthropic)
+  deviceId.ts           기기 고유 ID 생성 (localStorage + 쿠키 이중 저장)
+  store.tsx             전역 상태 Context + Upstash Redis 서버 동기화
+  App.tsx               레이아웃 + 페이지 라우팅
   components/
-    Sidebar.tsx     좌측 네비게이션
-    ClassModal.tsx  반 이름 설정 모달
+    Sidebar.tsx         좌측 네비게이션 (반 이름 이모지 자동 매핑)
+    ClassModal.tsx      반 이름 설정 모달
   pages/
-    WeeksPage.tsx   주간활동 관리
-    NotifyPage.tsx  알림장 AI 작성
-    ObservePage.tsx 관찰기록 AI 작성
-    ArchivePage.tsx 기록함 + 누적 평가
-    StatsPage.tsx   누적 현황 + 도넛 차트
-    KidsPage.tsx    유아 관리
+    WeeksPage.tsx       주간활동 관리
+    NotifyPage.tsx      알림장 AI 작성
+    ObservePage.tsx     관찰기록 AI 작성
+    ArchivePage.tsx     기록함 + 누적 평가
+    StatsPage.tsx       누적 현황 + 도넛 차트
+    KidsPage.tsx        유아 관리
+  utils/
+    toArchiveRecord.ts  기록함 저장용 관찰기록문 변환 + 영역 분류
 api/
-  anthropic.ts      Vercel 서버리스 함수 (OpenAI 프록시)
+  anthropic.ts          Vercel 서버리스 함수 (OpenAI 프록시)
+  data.ts               기기별 데이터 저장/조회 (Upstash Redis)
 ```
 
 ---
@@ -92,10 +96,15 @@ OPENAI_API_KEY=sk-...        # Vercel 서버리스 함수용
 - Vercel 서버리스 프록시(`/api/anthropic`) 구현
 - 주간활동 카테고리별 활동 입력 구조로 변경
 - 로컬 개발 시 `VITE_OPENAI_API_KEY` 직접 호출 분기 추가
-- 반 설정 모달 취소 버튼 가로 정렬 수정 (`white-space: nowrap`)
+- 반 설정 모달 취소 버튼 가로 정렬 수정
 - 사이드바 반 이름 이모지 자동 매핑 (동물 40여 종 포함)
-- 알림장: 아이 이름 성 제거(이름만 사용), 받침 유무에 따라 '이름이/이름 학부모님' 구분
-- 알림장: 월요일 주 시작 / 금요일 주 마무리 멘트 반영, 화·수·목 관련 멘트 차단
+- 알림장: 아이 이름 성 제거, 받침 유무에 따라 '이름이/이름 학부모님' 구분
+- 알림장: 월요일 주 시작 / 금요일 주 마무리 멘트 반영, 화·수·목 멘트 차단
+- 기기별 서버 동기화 구현 (Upstash Redis, UUID 기반) — Vercel에서 Redis 연결 필요
+- 브랜드 MoaRok! 리브랜딩, 퍼플→핑크 그라디언트
+- 사이드바 메뉴 재구성: 기록평가 / 기록관리 / 설정
+- 기록함 저장 시 AI가 ~다 체 객관적 관찰기록문으로 변환 + 누리과정 영역 자동 분류
 
 ### 미완료 / 다음 작업
-- (여기에 추가)
+- Vercel 대시보드에서 Upstash Redis 연결 (기기별 데이터 동기화 활성화)
+- (추가 기능 아이디어는 아래 참고)
