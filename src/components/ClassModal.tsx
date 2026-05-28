@@ -21,7 +21,7 @@ export default function ClassModal({ onClose }: { onClose: () => void }) {
             value={value}
             onChange={e => setValue(e.target.value)}
             placeholder="예: 햇살반, 사랑반"
-            onKeyDown={e => e.key === 'Enter' && save()}
+            onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && save()}
             autoFocus
           />
         </div>

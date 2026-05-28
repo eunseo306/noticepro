@@ -25,7 +25,7 @@ export default function KidsPage() {
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="유아 이름 입력"
-            onKeyDown={e => e.key === 'Enter' && addKid()}
+            onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && addKid()}
           />
           <button className="add-btn" onClick={addKid}>+ 추가</button>
         </div>

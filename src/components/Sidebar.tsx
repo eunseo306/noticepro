@@ -91,7 +91,7 @@ export default function Sidebar({ current, onNav, onClassModal }: Props) {
         <div className="class-name"><span>{className ? getClassEmoji(className) : '🏫'}</span><span>{className || '반 설정 필요'}</span></div>
       </div>
       <nav className="nav">
-        <div className="nav-section">기록평가</div>
+        <div className="nav-section">기록생성</div>
         {item('notify', '📮', '알림장')}
         {item('observe', '🔍', '관찰기록')}
         <div className="nav-divider" />
