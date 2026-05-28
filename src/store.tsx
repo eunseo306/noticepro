@@ -23,7 +23,9 @@ function load<T>(key: string, fallback: T): T {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [className, setClassName] = useState<string>(() => localStorage.getItem('v4_class') || '');
-  const [kids, setKids] = useState<string[]>(() => load('v4_kids', []));
+  const sortKo = (arr: string[]) => [...arr].sort((a, b) => a.localeCompare(b, 'ko'));
+  const [kids, setKidsRaw] = useState<string[]>(() => sortKo(load('v4_kids', [])));
+  const setKids = (arr: string[]) => setKidsRaw(sortKo(arr));
   const [weeks, setWeeks] = useState<Week[]>(() => load('v4_weeks', []));
   const [records, setRecords] = useState<AppRecord[]>(() => load('v4_records', []));
   const [selWeekIdx, setSelWeekIdx] = useState<number | null>(null);

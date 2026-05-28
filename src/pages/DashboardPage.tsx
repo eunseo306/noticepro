@@ -113,24 +113,26 @@ export default function DashboardPage({ onNav }: Props) {
                   <div key={k} style={{
                     border: `1px solid ${done ? 'var(--t3)' : empty ? 'var(--a3)' : 'var(--border)'}`,
                     borderRadius: 'var(--radius-sm)',
-                    padding: '12px 14px',
+                    padding: '14px 12px',
                     background: done ? 'var(--t2)' : empty ? '#FAEEDA' : 'var(--bg)',
+                    textAlign: 'center',
                   }}>
-                    {/* 이름 + 상태 배지 */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: done ? 'var(--t4)' : empty ? 'var(--a4)' : 'var(--text)' }}>
-                        {k}
-                      </span>
+                    {/* 이름 */}
+                    <div style={{ fontSize: 13, fontWeight: 700, color: done ? 'var(--t4)' : empty ? 'var(--a4)' : 'var(--text)', marginBottom: 5 }}>
+                      {k}
+                    </div>
+                    {/* 상태 배지 */}
+                    <div style={{ marginBottom: 10 }}>
                       {done ? (
-                        <span style={{ fontSize: 10, background: 'var(--t1)', color: '#fff', borderRadius: 999, padding: '2px 7px', fontWeight: 700 }}>기록완료</span>
+                        <span style={{ fontSize: 10, background: 'var(--t1)', color: '#fff', borderRadius: 999, padding: '2px 8px', fontWeight: 700 }}>기록완료</span>
                       ) : empty ? (
-                        <span style={{ fontSize: 10, background: 'var(--a1)', color: '#fff', borderRadius: 999, padding: '2px 7px', fontWeight: 600 }}>미기록</span>
+                        <span style={{ fontSize: 10, background: 'var(--a1)', color: '#fff', borderRadius: 999, padding: '2px 8px', fontWeight: 600 }}>미기록</span>
                       ) : (
                         <span style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>{count}/{TOTAL_DOMAINS} 영역</span>
                       )}
                     </div>
                     {/* 누리과정 영역 뱃지 */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, justifyContent: 'center' }}>
                       {DOMAINS.map(d => {
                         const has = covered.has(d.k);
                         return (
