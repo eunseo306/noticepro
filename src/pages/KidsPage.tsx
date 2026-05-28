@@ -8,7 +8,7 @@ export default function KidsPage() {
   function addKid() {
     const name = input.trim();
     if (!name) return;
-    setKids([...kids, name]);
+    setKids([...kids, name].sort((a, b) => a.localeCompare(b, 'ko')));
     setInput('');
   }
 

@@ -44,6 +44,10 @@ export default function WeeksPage() {
     setActInputs(prev => ({ ...prev, [wi]: { ...prev[wi], [cat]: val } }));
   }
 
+  function updateTheme(wi: number, field: 'mainTheme' | 'subTheme', val: string) {
+    setWeeks(weeks.map((w, idx) => idx !== wi ? w : { ...w, [field]: val }));
+  }
+
   return (
     <div>
       <div className="pg-header">
@@ -79,8 +83,18 @@ export default function WeeksPage() {
               <div>
                 <div className="week-name">{w.name}</div>
                 <div className="theme-row">
-                  {w.mainTheme && <span className="tmb" style={{ background: '#EEEDFE', color: '#3C3489', border: '1px solid #AFA9EC' }}>대: {w.mainTheme}</span>}
-                  {w.subTheme && <span className="tmb" style={{ background: '#E1F5EE', color: '#085041', border: '1px solid #5DCAA5' }}>소: {w.subTheme}</span>}
+                  <input
+                    value={w.mainTheme}
+                    onChange={e => updateTheme(i, 'mainTheme', e.target.value)}
+                    placeholder="대주제"
+                    style={{ fontSize: 12, padding: '2px 7px', border: '1px solid #AFA9EC', borderRadius: 6, background: '#EEEDFE', color: '#3C3489', width: 110, outline: 'none' }}
+                  />
+                  <input
+                    value={w.subTheme}
+                    onChange={e => updateTheme(i, 'subTheme', e.target.value)}
+                    placeholder="소주제"
+                    style={{ fontSize: 12, padding: '2px 7px', border: '1px solid #5DCAA5', borderRadius: 6, background: '#E1F5EE', color: '#085041', width: 110, outline: 'none' }}
+                  />
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
