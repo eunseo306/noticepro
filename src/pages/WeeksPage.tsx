@@ -56,7 +56,7 @@ export default function WeeksPage() {
         <div className="g3" style={{ marginBottom: 10 }}>
           <div className="sec" style={{ margin: 0 }}>
             <label>주차 이름 *</label>
-            <input value={wkName} onChange={e => setWkName(e.target.value)} placeholder="예: 5월 3주차" onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && addWeek()} />
+            <input value={wkName} onChange={e => setWkName(e.target.value)} placeholder="예: 5월 3주차" onKeyUp={e => e.key === 'Enter' && addWeek()} />
           </div>
           <div className="sec" style={{ margin: 0 }}>
             <label>대주제</label>
@@ -117,7 +117,7 @@ export default function WeeksPage() {
                           value={inputVal}
                           onChange={e => setInput(i, cat, e.target.value)}
                           placeholder="활동 입력 후 Enter"
-                          onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && addAct(i, cat)}
+                          onKeyUp={e => e.key === 'Enter' && addAct(i, cat)}
                           style={{ fontSize: 12, padding: '5px 9px' }}
                         />
                         <button className="add-btn" onClick={() => addAct(i, cat)} style={{ fontSize: 12, padding: '0 10px' }}>+</button>
