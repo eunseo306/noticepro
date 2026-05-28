@@ -20,11 +20,11 @@ ${text}
 - 3~4문장
 
 [누리과정 영역 판별]
-기록 내용을 바탕으로 해당 영역을 아래에서 선택 (1~3개):
+기록 내용에서 가장 핵심적인 영역 딱 1개만 선택:
 ${DOMAIN_LIST.join(', ')}
 
 [출력 형식 - JSON만 출력, 다른 설명 없이]
-{"body":"변환된 관찰 기록문","domains":["해당 영역"]}`;
+{"body":"변환된 관찰 기록문","domains":["핵심 영역 1개"]}`;
 
   const raw = await callAnthropic([{ role: 'user', content: prompt }], { maxTokens: 600 });
   const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());

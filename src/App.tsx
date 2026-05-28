@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { AppProvider, useStore } from './store';
 import Sidebar from './components/Sidebar';
 import ClassModal from './components/ClassModal';
+import DashboardPage from './pages/DashboardPage';
 import WeeksPage from './pages/WeeksPage';
 import NotifyPage from './pages/NotifyPage';
 import ObservePage from './pages/ObservePage';
@@ -12,7 +13,7 @@ import type { Page } from './types';
 
 function AppContent() {
   const { className } = useStore();
-  const [page, setPage] = useState<Page>('weeks');
+  const [page, setPage] = useState<Page>('home');
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ function AppContent() {
       <Sidebar current={page} onNav={setPage} onClassModal={() => setShowModal(true)} />
       <div className="main">
         <div className="main-inner">
+          {page === 'home'    && <DashboardPage onNav={setPage} />}
           {page === 'weeks'   && <WeeksPage />}
           {page === 'notify'  && <NotifyPage />}
           {page === 'observe' && <ObservePage />}

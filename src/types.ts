@@ -1,4 +1,4 @@
-export type Page = 'weeks' | 'notify' | 'observe' | 'archive' | 'stats' | 'kids';
+export type Page = 'home' | 'weeks' | 'notify' | 'observe' | 'archive' | 'stats' | 'kids';
 
 export interface Week {
   name: string;
