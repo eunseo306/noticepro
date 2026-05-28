@@ -15,8 +15,8 @@ export default function KidsPage() {
   return (
     <div>
       <div className="pg-header">
-        <div className="pg-title">유아 관리</div>
-        <div className="pg-sub">반 유아 이름을 등록해요</div>
+        <div className="pg-title">유아관리</div>
+        <div className="pg-sub">반 유아 이름을 등록해요.</div>
       </div>
       <div className="card">
         <div className="add-row">

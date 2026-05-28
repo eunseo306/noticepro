@@ -48,7 +48,7 @@ export default function DashboardPage({ onNav }: Props) {
     <div>
       <div className="pg-header">
         <div className="pg-title">홈</div>
-        <div className="pg-sub">{className || '우리반'} 기록 현황을 한눈에 확인해보세요.</div>
+        <div className="pg-sub">{className || '우리반'} 기록 현황을 한눈에 확인해요.</div>
       </div>
 
       {!kids.length ? (

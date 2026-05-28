@@ -7,15 +7,15 @@ import { toArchiveRecord } from '../utils/toArchiveRecord';
 const MOODS = [
   { v: '매우 활발하고 즐거웠어요', em: '🤩', label: '매우 활발' },
   { v: '밝고 안정적이었어요', em: '😊', label: '밝고 안정' },
-  { v: '평소보다 차분했어요', em: '😌', label: '차분했어요' },
-  { v: '조금 피곤해 보였어요', em: '😴', label: '피곤해보여' },
+  { v: '평소보다 차분했어요', em: '😌', label: '차분함' },
+  { v: '조금 피곤해 보였어요', em: '😴', label: '피곤해 보임' },
   { v: '컨디션이 좋지 않았어요', em: '🤒', label: '컨디션 저조' },
 ];
 const MEALS = [
-  { v: '잘 먹었어요', em: '😋', label: '잘 먹었어요' },
-  { v: '보통으로 먹었어요', em: '🙂', label: '보통으로' },
+  { v: '잘 먹었어요', em: '😋', label: '잘 먹음' },
+  { v: '보통으로 먹었어요', em: '🙂', label: '보통' },
   { v: '조금 적게 먹었어요', em: '😐', label: '조금 적게' },
-  { v: '거의 먹지 않았어요', em: '😶', label: '거의 안먹어' },
+  { v: '거의 먹지 않았어요', em: '😶', label: '거의 안 먹음' },
 ];
 const TONES = ['따뜻하고 친근하게', '정중하고 공식적으로', '간결하게'];
 
@@ -125,8 +125,8 @@ export default function NotifyPage() {
   return (
     <div>
       <div className="pg-header">
-        <div className="pg-title">알림장 작성</div>
-        <div className="pg-sub">유아를 선택하고 정보를 입력하면 AI가 알림장을 완성해드려요</div>
+        <div className="pg-title">알림장</div>
+        <div className="pg-sub">유아 정보를 입력하면 MoaRok!이 알림장을 작성해요.</div>
       </div>
 
       <div className="card">

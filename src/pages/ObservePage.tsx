@@ -77,7 +77,7 @@ ${rawObs}
     <div>
       <div className="pg-header">
         <div className="pg-title">관찰기록</div>
-        <div className="pg-sub">특징적인 놀이 장면을 메모하면 AI가 공식 관찰기록문으로 만들어드려요</div>
+        <div className="pg-sub">놀이 장면을 메모하면 MoaRok!이 관찰기록문을 완성해요.</div>
       </div>
 
       <div className="card">

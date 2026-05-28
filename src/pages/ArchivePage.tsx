@@ -114,7 +114,7 @@ ${r.body}
     <div>
       <div className="pg-header">
         <div className="pg-title">기록함</div>
-        <div className="pg-sub">유아별 · 영역별로 알림장과 관찰기록이 모여요</div>
+        <div className="pg-sub">유아별·영역별로 저장된 알림장과 관찰기록을 확인해요.</div>
       </div>
 
       {/* Cumulative eval panel */}

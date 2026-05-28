@@ -60,7 +60,7 @@ export default function StatsPage() {
     <div>
       <div className="pg-header">
         <div className="pg-title">누적 현황</div>
-        <div className="pg-sub">유아별로 이달 관찰이 영역별로 얼마나 쌓였는지 확인해요</div>
+        <div className="pg-sub">유아별 누리과정 영역 관찰 현황을 확인해요.</div>
       </div>
 
       {!kids.length ? (

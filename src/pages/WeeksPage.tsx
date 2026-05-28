@@ -51,8 +51,8 @@ export default function WeeksPage() {
   return (
     <div>
       <div className="pg-header">
-        <div className="pg-title">주간활동 관리</div>
-        <div className="pg-sub">주차별 대주제·소주제·활동 목록을 등록하고 이번 주로 설정해요</div>
+        <div className="pg-title">주간활동</div>
+        <div className="pg-sub">주차별 대주제·소주제·활동 목록을 관리해요.</div>
       </div>
 
       <div className="nwk-form">
