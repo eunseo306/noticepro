@@ -81,12 +81,12 @@ export default function Sidebar({ current, onNav, onClassModal }: Props) {
 
   return (
     <div className="sidebar">
-      <div className="brand" onClick={() => onNav('home')} style={{ cursor: 'pointer' }}>
+      <div className="brand">
         <div className="brand-tagline">아이들의 모든 순간을 모아 기록하다 ✨</div>
         <div className="brand-name">MoaRok!</div>
         <div className="brand-sub">유아 알림장·관찰기록·평가 통합 플랫폼</div>
       </div>
-      <div className="class-info">
+      <div className="class-info" style={{ cursor: 'default' }}>
         <div className="class-badge">현재 반</div>
         <div className="class-name"><span>{className ? getClassEmoji(className) : '🏫'}</span><span>{className || '반 설정 필요'}</span></div>
       </div>
@@ -100,6 +100,7 @@ export default function Sidebar({ current, onNav, onClassModal }: Props) {
         {item('stats', '📊', '누적 현황')}
         <div className="nav-divider" />
         <div className="nav-section">설정</div>
+        {item('home', '🏠', '홈')}
         {item('weeks', '📅', '주간활동')}
         {item('kids', '👧', '유아관리')}
         <div className="nav-item" onClick={onClassModal}><span className="icon">⚙️</span>반 설정</div>

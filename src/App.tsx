@@ -13,7 +13,7 @@ import type { Page } from './types';
 
 function AppContent() {
   const { className } = useStore();
-  const [page, setPage] = useState<Page>('home');
+  const [page, setPage] = useState<Page>('notify');
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
