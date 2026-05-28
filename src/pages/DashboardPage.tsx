@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useStore } from '../store';
+import { DOMAINS } from '../constants';
 import type { Page } from '../types';
 
 interface Props {
   onNav: (page: Page) => void;
 }
+
+const TOTAL_DOMAINS = DOMAINS.length; // 5
 
 export default function DashboardPage({ onNav }: Props) {
   const { className, kids, records } = useStore();
@@ -25,26 +28,26 @@ export default function DashboardPage({ onNav }: Props) {
     return `${parseInt(m.split('-')[1])}월`;
   }
 
-  function kidStats(name: string, m: string) {
+  // 해당 아이의 해당 월 기록에서 커버된 누리과정 영역 Set 반환
+  function coveredDomains(name: string, m: string): Set<string> {
     const recs = records.filter(r => r.kidName === name && r.date?.startsWith(m));
-    return {
-      total: recs.length,
-      notify: recs.filter(r => r.type === 'notify').length,
-      observe: recs.filter(r => r.type === 'observe').length,
-    };
+    const covered = new Set<string>();
+    recs.forEach(r => (r.domains || []).forEach(d => covered.add(d)));
+    return covered;
   }
 
   const monthRecs = records.filter(r => r.date?.startsWith(month));
   const totalCount = monthRecs.length;
   const notifyCount = monthRecs.filter(r => r.type === 'notify').length;
   const obsCount = monthRecs.filter(r => r.type === 'observe').length;
-  const recordedKidsCount = new Set(monthRecs.map(r => r.kidName)).size;
-  const missingKids = kids.filter(k => !monthRecs.some(r => r.kidName === k));
+
+  const completedKids = kids.filter(k => coveredDomains(k, month).size === TOTAL_DOMAINS);
+  const missingKids = kids.filter(k => coveredDomains(k, month).size === 0);
 
   return (
     <div>
       <div className="pg-header">
-        <div className="pg-title">홈</div>
+        <div className="pg-title">Home</div>
         <div className="pg-sub">{className || '우리반'} · 월별·아이별 기록 현황을 한눈에 확인해요</div>
       </div>
 
@@ -85,44 +88,62 @@ export default function DashboardPage({ onNav }: Props) {
               <span style={{ fontSize: 18, lineHeight: 1.4 }}>⚠️</span>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--a4)', marginBottom: 2 }}>
-                  {monthLabel} 미기록 유아 {missingKids.length}명
+                  {monthLabel} 기록 없는 유아 {missingKids.length}명
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--a4)' }}>{missingKids.join(', ')}</div>
               </div>
             </div>
           )}
 
-          {/* 아이별 카드 */}
+          {/* 아이별 누리과정 영역 현황 */}
           <div className="stat-card">
             <div className="stat-title">
-              {monthLabel} · 유아별 기록 현황
+              {monthLabel} · 유아별 누리과정 영역 현황
               <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--hint)', marginLeft: 8 }}>
-                {recordedKidsCount}/{kids.length}명 기록 완료
+                {completedKids.length}/{kids.length}명 기록완료
               </span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
               {kids.map(k => {
-                const st = kidStats(k, month);
-                const empty = st.total === 0;
+                const covered = coveredDomains(k, month);
+                const count = covered.size;
+                const done = count === TOTAL_DOMAINS;
+                const empty = count === 0;
                 return (
                   <div key={k} style={{
-                    border: `1px solid ${empty ? 'var(--a3)' : 'var(--border)'}`,
+                    border: `1px solid ${done ? 'var(--t3)' : empty ? 'var(--a3)' : 'var(--border)'}`,
                     borderRadius: 'var(--radius-sm)',
-                    padding: '10px 12px',
-                    background: empty ? '#FAEEDA' : 'var(--bg)',
+                    padding: '12px 14px',
+                    background: done ? 'var(--t2)' : empty ? '#FAEEDA' : 'var(--bg)',
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: empty ? 'var(--a4)' : 'var(--text)' }}>{k}</span>
-                      {empty && (
-                        <span style={{ fontSize: 10, background: 'var(--a1)', color: '#fff', borderRadius: 999, padding: '1px 6px', fontWeight: 600 }}>미기록</span>
+                    {/* 이름 + 상태 배지 */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: done ? 'var(--t4)' : empty ? 'var(--a4)' : 'var(--text)' }}>
+                        {k}
+                      </span>
+                      {done ? (
+                        <span style={{ fontSize: 10, background: 'var(--t1)', color: '#fff', borderRadius: 999, padding: '2px 7px', fontWeight: 700 }}>기록완료</span>
+                      ) : empty ? (
+                        <span style={{ fontSize: 10, background: 'var(--a1)', color: '#fff', borderRadius: 999, padding: '2px 7px', fontWeight: 600 }}>미기록</span>
+                      ) : (
+                        <span style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>{count}/{TOTAL_DOMAINS} 영역</span>
                       )}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.8 }}>
-                      <div>📮 {st.notify}건</div>
-                      <div>🔍 {st.observe}건</div>
-                    </div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: empty ? 'var(--a4)' : 'var(--p)', marginTop: 3 }}>
-                      합계 {st.total}건
+                    {/* 누리과정 영역 뱃지 */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                      {DOMAINS.map(d => {
+                        const has = covered.has(d.k);
+                        return (
+                          <span key={d.k} style={{
+                            fontSize: 10, padding: '2px 7px', borderRadius: 999, fontWeight: 600,
+                            background: has ? d.bg : 'var(--card)',
+                            color: has ? d.co : 'var(--hint)',
+                            border: `1px solid ${has ? d.br : 'var(--border)'}`,
+                          }}>
+                            {d.em} {d.k}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -132,7 +153,7 @@ export default function DashboardPage({ onNav }: Props) {
 
           {/* 최근 4개월 테이블 */}
           <div className="stat-card">
-            <div className="stat-title">최근 4개월 · 유아별 기록 수</div>
+            <div className="stat-title">최근 4개월 · 유아별 영역 달성 현황</div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                 <thead>
@@ -156,19 +177,18 @@ export default function DashboardPage({ onNav }: Props) {
                     <tr key={k} style={{ background: ki % 2 === 0 ? 'transparent' : 'var(--bg)' }}>
                       <td style={{ padding: '7px 10px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>{k}</td>
                       {months.map(m => {
-                        const cnt = kidStats(k, m).total;
+                        const cnt = coveredDomains(k, m).size;
+                        const done = cnt === TOTAL_DOMAINS;
                         const isCur = m === month;
                         return (
                           <td key={m} style={{ textAlign: 'center', padding: '7px 12px', borderBottom: '1px solid var(--border)', background: isCur ? 'rgba(83,74,183,.04)' : 'transparent' }}>
-                            <span style={{
-                              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                              minWidth: 28, height: 24, borderRadius: 6,
-                              fontWeight: 700, fontSize: 12,
-                              background: cnt === 0 ? '#FAEEDA' : cnt >= 5 ? 'var(--p1)' : 'transparent',
-                              color: cnt === 0 ? 'var(--a4)' : cnt >= 5 ? 'var(--p3)' : 'var(--muted)',
-                            }}>
-                              {cnt === 0 ? '–' : cnt}
-                            </span>
+                            {cnt === 0 ? (
+                              <span style={{ color: 'var(--hint)' }}>–</span>
+                            ) : done ? (
+                              <span style={{ fontSize: 10, background: 'var(--t1)', color: '#fff', borderRadius: 999, padding: '2px 7px', fontWeight: 700 }}>완료</span>
+                            ) : (
+                              <span style={{ fontWeight: 700, color: 'var(--muted)' }}>{cnt}/{TOTAL_DOMAINS}</span>
+                            )}
                           </td>
                         );
                       })}
